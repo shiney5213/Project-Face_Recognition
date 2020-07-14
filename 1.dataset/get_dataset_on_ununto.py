@@ -10,6 +10,11 @@ print('Please enter your VGG Face 2 credentials:')
 user_string = input('    User: ')
 password_string = getpass.getpass(prompt='    Password: ')
 
+payload = {
+    'username': user_string,
+    'password': password_string
+}
+
 session = requests.session()
 r = session.get(LOGIN_URL)
 
