@@ -10,8 +10,8 @@ user_string = input('    User: ')
 password_string = getpass.getpass(prompt='    Password: ')
 
 payload = {
-    'username': lamin18,
-    'password': qkrxo6264!
+    'username':user_string, 
+    'password': password_string
 }
 
 session = requests.session()
