@@ -5,7 +5,6 @@ import sys
 LOGIN_URL = "http://zeus.robots.ox.ac.uk/vgg_face2/login/"
 # FILE_URL = "http://zeus.robots.ox.ac.uk/vgg_face2/get_file?fname=vggface2_test.tar.gz"
 FILE_URL = "http://zeus.robots.ox.ac.uk/vgg_face2/get_file?fname=vggface2_train.tar.gz"
-
 print('Please enter your VGG Face 2 credentials:')
 user_string = input('    User: ')
 password_string = getpass.getpass(prompt='    Password: ')
