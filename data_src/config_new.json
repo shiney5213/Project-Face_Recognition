@@ -1,1 +1,0 @@
-{"epochs": 20, "model": {"batch_size": 32, "cells": 128}, "patients": 3}
