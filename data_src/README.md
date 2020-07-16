@@ -59,7 +59,7 @@ s = mx.recordio.pack(header, b'')
 
 record.write_idx(item[0], s)
 ```
-### 1.5.2. rec
+### 1.5.2. rec 파일 만들기
 ```
 record = mx.recordio.MXIndexedRecordIO(os.path.join(working_dir, fname_idx),
                                        os.path.join(working_dir, fname_rec), 'w')
