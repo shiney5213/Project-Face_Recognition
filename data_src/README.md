@@ -6,12 +6,14 @@ ___
 
 ## 1.1. dataset download
 - vgg2 face dataset: http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
+- data: train sef만 사용 (dir: 8631개, file: 3,141,890개)
 - [download dataset for ubuntu](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.1.get_dataset_on_ubuntu.py)
  ![1.1.data_download](../images/1.1.data_download.png)
 
 ## 1.2. face detection & align 112 x 112
 - [mtcnn 이용](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.2.face_crop_112x112(MTCNN).ipynb)
 - [haar_cascade 이용](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.2.face_crop_112x112(haar_cascade).ipynb)
+- file: 3,123,756개 사용
  ![1.2.align_112](../images/1.2.align_112.png)
 
 ## 1.3. dir to lst 
