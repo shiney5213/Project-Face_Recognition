@@ -1,7 +1,7 @@
 # 1. Dataset 
 
-- 참고: https://github.com/deepinsight/insightface/issues/791
-- 참고: https://github.com/deepinsight/insightface/issues/256
+- dataset을 직접 만들어봅니다.
+
 ___
 
 ## 1.1. dataset download
@@ -73,3 +73,10 @@ record.write_idx(item[0], s)
 header, s = recordio.unpack(imgrec.read_idx(1))
 img = mx.image.imdecode(s).asnumpy() 
 ```
+
+---
+
+## Reference
+
+-  https://github.com/deepinsight/insightface/issues/791
+-  https://github.com/deepinsight/insightface/issues/256
