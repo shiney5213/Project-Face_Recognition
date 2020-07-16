@@ -10,30 +10,30 @@ ___
  ![1.1.data_download](../images/1.1.data_download.png)
 
 ## 1.2. face detection & align 112 x 112
-- mtcnn 이용
-- source: 
-- ![1.2.align_112](../images/1.2.align_112.png)
+- [mtcnn 이용](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.2.face_crop_112x112(MTCNN).ipynb)
+- [haar_cascade 이용](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.2.face_crop_112x112(haar_cascade).ipynb)
+ ![1.2.align_112](../images/1.2.align_112.png)
 
 ## 1.3. dir to lst 
-
 - image file에 대한 정보를 나타내는 파일
-- align되었는지(1), image path, label로 구성
-- ![1.3.dir2lst](../images/1.3.dir2lst.png)
+- [make lst file](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.3.dir2lst.ipynb)
+- align 여부, image path, label로 구성
+ ![1.3.dir2lst](../images/1.3.dir2lst.png)
 
 ## 1.4. property
 - num_classes, img_size, img_size
-- vgg2_face_dataser
-  -  8631, 112, 112
+- vgg2_face_dataser:   8631, 112, 112
+- [property file](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.4.property.ipynb)
 
 ## 1.5. face to rec, idx
-### 1.5.1. idx
+### 1.5.1. [idx 살펴보기](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.5.view_idx_file.ipynb)
 - image에 대한 정보를 저장
 - img_id, s로 구성
-- ![1.4.idx_file](../images/1.4.idx_file.png)
+![1.4.idx_file](../images/1.4.idx_file.png)
 
-### 1.5.2.idx 만들기
+### 1.5.2. [idx 만들기](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.5.face2rec2(mxnet).ipynb)
 - lst file에서 image정보를 불러와 image_list 만들기
-- ![1.4.image_list](../images/1.4.image_list.png)
+ ![1.4.image_list](../images/1.4.image_list.png)
 - 개별 이미지에 대한 정보 (item.flag =0)
     - HEADER(flag=0, label=[0, 1], id=151, id2=0)
     - flag: 개별 이미지
@@ -66,7 +66,7 @@ record = mx.recordio.MXIndexedRecordIO(os.path.join(working_dir, fname_idx),
                                        
 record.write_idx(item[0], s)
 ```
-### 1.5.3. idx와 rec
+### 1.5.3.[ idx와 rec](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.5.view_rec%2Cidx_file(vgg2dataset).ipynb)
 - 두 개의 파일을 이용해서 이미지에 대한 메타 정보와 이미지를 가져올 수 있음.
 
 ```
