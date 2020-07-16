@@ -6,9 +6,9 @@ ___
 
 ## 1.1. dataset download
 - vgg2 face dataset: http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/
-- source : 
-- ![1.1.data_download](../images/1.1.data_download.png)
-- 
+- [download dataset for ubuntu](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.1.get_dataset_on_ubuntu.py)
+ ![1.1.data_download](../images/1.1.data_download.png)
+
 ## 1.2. face detection & align 112 x 112
 - mtcnn 이용
 - source: 
