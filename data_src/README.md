@@ -101,6 +101,13 @@ def load_mx_rec(rec_path):
 
 ## 1.7. 전체 process 살펴보기
 
+- 
+
+## 1.8. API 제공
+
+- https://gluon-face.readthedocs.io/en/latest/model_zoo.html
+- 참고해도 좋을 것 같음.
+
 ---
 
 ## Reference
