@@ -76,6 +76,31 @@ header, s = recordio.unpack(imgrec.read_idx(1))
 img = mx.image.imdecode(s).asnumpy() 
 ```
 
+## 1.6. rec,idx to img
+- train.rec, train.idx를 통해 img로 변환해서 저장
+- [이미지로 저장](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.6.prepare_data(InsightFace_Pytorch).ipynb)
+```
+def load_mx_rec(rec_path):
+    save_path = rec_path/'imgs'
+    if not save_path.exists():
+        save_path.mkdir()
+    imgrec = mx.recordio.MXIndexedRecordIO(str(rec_path/'train.idx'), str(rec_path/'train.rec'), 'r')
+    img_info = imgrec.read_idx(0)
+    header,_ = mx.recordio.unpack(img_info)
+    max_idx = int(header.label[0])
+    for idx in tqdm(range(1,max_idx)):
+        img_info = imgrec.read_idx(idx)
+        header, img = mx.recordio.unpack_img(img_info)
+        print(type(img))
+        label = int(header.label[0])
+        label_path = save_path/str(label)
+        if not label_path.exists():
+            label_path.mkdir()
+        cv2.imwrite(f'{label_path}/{idx}.jpg',img, [cv2.IMWRITE_JPEG_QUALITY, 95])
+```
+
+## 1.7. 전체 process 살펴보기
+
 ---
 
 ## Reference
