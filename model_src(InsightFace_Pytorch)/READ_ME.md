@@ -20,20 +20,29 @@ faces_emore/imgs/num (num: 0~85742)
 #### testset
 - agedb_30 :  12000
 - cfp_fp : 14000
-- lfw : 12000
 - calfw : 12000
 - cfp_ff :  14000
 - cplfw : 12000
 - vgg2_fp: 10000
-
-```
-# agedb dataset
-faces_emore/agebd_30/meta/sizes
-						 /storage
-					/data/__num.blp ( num: 0~923)
-           /agedb_30_list.npy
-		   /agedb_30.bin					
-                    
-```
-
-   
+- lfw : 12000
+	- lfw dataset
+    ```
+    # lfw dataset
+    faces_emore/lfw/meta/sizes
+                        /storage
+                        /data/__num.blp ( num: 0~923)
+               /lfw_list.npy
+               /lfw.bin					         
+    ```
+  - lfw -> img_array, issame
+	```
+	path = '../data/faces_emore'
+	name = 'lfw'
+	carray = bcolz.carray(rootdir = os.path.join(path, name), mode='r')
+	print(carray.shape)
+	>> (12000, 3, 112,112)
+	
+	issame = np.load(os.path.join(path, f'{name}_list.npy'))
+	print(len(issame))
+	>> 6000
+	```
