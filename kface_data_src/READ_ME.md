@@ -21,8 +21,8 @@ InshightFace_Pytorch_with_kface_dataset
 ##### 1.1.3. all data
   - dir: 86142, file: 5872144
 - preprocessing
-	- face_emore: .rec, .idx -> imgs dir
-	- k_face_dataset: aligned_112x112 by MTCNN
+	- face_emore: .rec, .idx -> imgs dir ([source](https://github.com/shiney5213/Project-Face_Recognition/blob/master/kface_data_src/1.6.rec2img.py))
+	- k_face_dataset: aligned_112x112 by MTCNN([source](https://github.com/shiney5213/Project-Face_Recognition/blob/master/kface_data_src/1.2.face_crop_112x112.py))
 
 #### 1.2. test set
 
