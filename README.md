@@ -1,7 +1,7 @@
 # Project-Face_Recognition
  딥러닝기술을 활용하여 사람들의 얼굴을 인식합니다.
 
- InshgitFace_Pytorch를 korean_face_dataset으로 train합니다
+ InshgitFace_Pytorch를 korean_face_dataset을 추가하여 train합니다
 
 ---
 
@@ -43,3 +43,10 @@
 ##### 1.2.1.  k_face_dataset
 
   - dir: 400, file: 12000 ( 400 * 32 = 12800 개 중 800장은 face deteching 실패)
+
+---
+## 2. model
+- https://github.com/TreB1eN/InsightFace_Pytorch
+#### 1. backborn
+- IR-SE50,  Mobilefacenet 중 택1
+- epoth 
