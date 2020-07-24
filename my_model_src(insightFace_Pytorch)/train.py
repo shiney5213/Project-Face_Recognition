@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser.add_argument("-w", "--num_workers", help="workers number", default=3, type=int)
     # parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='emore', type=str)
     parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='small_vgg', type=str)
+    # parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='emore_kface', type=str)
     
     args = parser.parse_args()
 
