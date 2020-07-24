@@ -107,7 +107,10 @@ def load_mx_rec(rec_path):
 - aligned된 img, pairs.txt 파일 필요
 - .bin 만들기(https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.img2bin(tensorflow).ipynb)
 
-## 1.9. API 제공
+- .bin만들 때 필요한 파일: pairs.txt:
+  - pairs.txt를 만들기 위해서 [rename_img](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.1.file_rename.ipynb), [generate prairs.txt](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.2.img2pairs.txt.ipynb)
+
+## 1.11. API 제공
 
 - https://gluon-face.readthedocs.io/en/latest/model_zoo.html
 - 참고해도 좋을 것 같음.
