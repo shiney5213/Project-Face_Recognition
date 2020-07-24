@@ -42,7 +42,7 @@
 
 ##### 1.2.1.  k_face_dataset
 
-  - dir: 400, file: 12000 ( 400 * 32 = 12800 개 중 800장은 face deteching 실패)
+  - dir: 400, file: 11027 ( 400 * 32 = 12800 개 중 1773장은 face deteching 실패)
 
 ---
 ## 2. model
@@ -78,3 +78,8 @@
 
 #### 6. pytorch에서는 model 뿐 아니라 optimizer를 왜 저장할까?
 - optimizer의 매개변수도 반복 후에 변경될 수 있으므로 함께 저장해야 함.
+
+#### 7. scheduler도 저장해야 할까?
+
+#### 8. validation loss는 구하지 않아도 되는걸까?
+- overfitting 여부때문에 알아야 할 것 같음
