@@ -101,14 +101,44 @@ def load_mx_rec(rec_path):
 
 ## 1.7. 전체 process 살펴보기
 
-- 
+- [전체적인 과정 살펴보기](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.7.all_process(faces_webfaces_112x112).ipynb)
 
 ## 1.8. img to bin(testset)
 - aligned된 img, pairs.txt 파일 필요
 - .bin 만들기(https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.img2bin(tensorflow).ipynb)
 
-- .bin만들 때 필요한 파일: pairs.txt:
+- .bin만들 때 필요한 파일: pairs.txt
   - pairs.txt를 만들기 위해서 [rename_img](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.1.file_rename.ipynb), [generate prairs.txt](https://github.com/shiney5213/Project-Face_Recognition/blob/master/data_src/1.8.2.img2pairs.txt.ipynb)
+
+## 1.9. bin to .npy, .blp 등
+
+```
+lfw.bin > lfw >  data> _num.blp (num: 0~ )
+         			> meta > sizes, storage
+        > lfw_list.npy
+```
+
+
+
+## 1.10. 정리(원하는 dataset으로 변환가능)
+
+#### 1.10.1. trainset
+
+```
+imgs(img) ---> train.lst ---> train.idx   > imgs(img)
+						    train.rec   
+						    property
+```
+
+#### 1.10.2. testset
+
+```
+imgs(img) ---> pairs.txt   ---> dataset > data > _num.blp
+			 testset.bin                      > meta > sizes, storage
+			 				 dataset_list.npy
+```
+
+
 
 ## 1.11. API 제공
 
