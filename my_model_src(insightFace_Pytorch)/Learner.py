@@ -13,7 +13,7 @@ from PIL import Image
 from torchvision import transforms as trans
 import math
 import bcolz
-
+import datetime
 
 class face_learner(object):
     def __init__(self, conf, inference=False):
@@ -27,7 +27,8 @@ class face_learner(object):
         
         if not inference:
             self.milestones = conf.milestones
-            self.loader, self.class_num = get_train_loader(conf)        
+            self.loader, self.class_num = get_train_loader(conf)  
+            print('class_num:', self.class_num)      
 
             self.writer = SummaryWriter(conf.log_path)
             self.step = 0
@@ -49,51 +50,73 @@ class face_learner(object):
                                     {'params': paras_only_bn}
                                 ], lr = conf.lr, momentum = conf.momentum)
             print(self.optimizer)
-#             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, patience=40, verbose=True)
+            # self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, patience=40, verbose=True)
 
             print('optimizers generated')   
-            if conf.data_mode == 'small_vgg':
-                self.board_loss_every = len(self.loader)
-                self.evaluate_every = len(self.loader)
-                self.save_every = len(self.loader)
-                # self.lfw, self.lfw_issame = get_val_data(conf, conf.smallvgg_folder)  
+            # if conf.data_mode == 'small_vgg':
+            #     self.board_loss_every = len(self.loader)
+            #     print('len(loader', len(self.loader))
+            #     self.evaluate_every = len(self.loader)
+            #     self.save_every = len(self.loader)
+            #     # self.lfw, self.lfw_issame = get_val_data(conf, conf.smallvgg_folder)  
 
-            else:
-                self.board_loss_every = len(self.loader)//100
-                self.evaluate_every = len(self.loader)//10
-                self.save_every = len(self.loader)//5
-            self.agedb_30, self.cfp_fp, self.lfw, self.agedb_30_issame, self.cfp_fp_issame, self.lfw_issame = get_val_data(conf, self.loader.dataset.root.parent)
+            # else:
+            #     self.board_loss_every = len(self.loader)
+                
+
+            #     self.evaluate_every = len(self.loader)//10
+            #     self.save_every = len(self.loader)//5
+            self.agedb_30, self.cfp_fp, self.lfw, self.kface, self.agedb_30_issame, self.cfp_fp_issame, self.lfw_issame, self.kface_issame = get_val_data(conf, self.loader.dataset.root.parent)
                 
         else:
             self.threshold = conf.threshold
     
-    def save_state(self, conf, accuracy, e, to_save_folder=False, extra=None, model_only=False):
+    def save_state(self, conf, accuracy, e, loss, to_save_folder=False, extra=None, model_only=False):
         if to_save_folder:
             save_path = conf.save_path
 
         else:
             save_path = conf.model_path
 
+        model_name = f'model_e:{e+1}_acc:{accuracy}_loss:{loss}_{extra}.pth'
+
         torch.save(
-            self.model.state_dict(), save_path /
-            ('model_{}_accuracy:{}_epoch:{}_step:{}_{}.pth'.format(get_time(), accuracy, e, self.step, extra)))
+            self.model.state_dict(), save_path /model_name)
         if not model_only:
-            torch.save(
-                self.head.state_dict(), save_path /
-                ('head_{}_accuracy:{}_epoch:{}_step:{}_{}.pth'.format(get_time(), accuracy, e, self.step, extra)))
-            torch.save(
-                self.optimizer.state_dict(), save_path /
-                ('optimizer_{}_accuracy:{}_epoch:{}_step:{}_{}.pth'.format(get_time(), accuracy, e, self.step, extra)))
+            # 똥째로 저장 
+            state = {
+                'model': self.model.state_dict(),
+                'head': self.head.state_dict(),
+                'optimizer': self.optimizer.state_dict()
+            }
+            torch.save(state,  save_path /model_name)
+            # print('model saved: ', model_name)
+
+            
+            ## 따로따로 저장
+            # torch.save(
+            #     self.head.state_dict(), save_path /
+            #     ('head_{}_accuracy:{}_epoch:{}_step:{}_{}.pth'.format(get_time(), accuracy, e, self.step, extra)))
+            # torch.save(
+            #     self.optimizer.state_dict(), save_path /
+            #     ('optimizer_{}_accuracy:{}_epoch:{}_step:{}_{}.pth'.format(get_time(), accuracy, e, self.step, extra)))
     
     def load_state(self, conf, fixed_str, from_save_folder=False, model_only=False):
         if from_save_folder:
             save_path = conf.save_path
         else:
-            save_path = conf.model_path            
-        self.model.load_state_dict(torch.load(save_path/'model_{}'.format(fixed_str)))
+            save_path = conf.model_path     
+        if model_only:       
+            self.model.load_state_dict(torch.load(save_path/'model_{}'.format(fixed_str)))
         if not model_only:
-            self.head.load_state_dict(torch.load(save_path/'head_{}'.format(fixed_str)))
-            self.optimizer.load_state_dict(torch.load(save_path/'optimizer_{}'.format(fixed_str)))
+            model_name = 'model_{}'.format(fixed_str)
+            state = torch.load(save_path/model_name)
+            self.model.load_state_dict(state['model'])
+            self.head.load_state_dict(state['head'])
+            self.optimizer.load_state_dict(state['optimizer'])
+
+            # self.head.load_state_dict(torch.load(save_path/'head_{}'.format(fixed_str)))
+            # self.optimizer.load_state_dict(torch.load(save_path/'optimizer_{}'.format(fixed_str)))
         
     def board_val(self, db_name, accuracy, best_threshold, roc_curve_tensor):
         self.writer.add_scalar('{}_accuracy'.format(db_name), accuracy, self.step)
@@ -195,33 +218,57 @@ class face_learner(object):
     def train(self, conf, epochs):
         self.model.train()
         running_loss = 0.   
-
-        if conf.data_mode == 'small_vgg':
-            for e in range(epochs):
-                print('epoch {} started'.format(e))
-                if e == self.milestones[0]:
-                    self.schedule_lr()
-                if e == self.milestones[1]:
-                    self.schedule_lr()      
-                if e == self.milestones[2]:
-                    self.schedule_lr()
+        time_ = datetime.datetime.now()
 
 
-                accuracy_list = []
-                for imgs, labels in tqdm(iter(self.loader)):
-                    imgs = imgs.to(conf.device)
-                    labels = labels.to(conf.device)
-                    self.optimizer.zero_grad()
-                    embeddings = self.model(imgs)
-                    thetas = self.head(embeddings, labels)
-                    loss = conf.ce_loss(thetas, labels)
-                    loss.backward()
-                    running_loss += loss.item()
-                    self.optimizer.step()
+         # check parameter of model
+        print("------------------------------------------------------------")
+        total_params = sum(p.numel() for p in self.model.parameters())
+        print("num of parameter : ", total_params)
+        trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+        print("num of trainable_ parameter :", trainable_params)
+        print("------------------------------------------------------------")
 
+        
+        # if conf.data_mode == 'small_vgg':
+        for e in range(epochs):
+            print('epoch {} started'.format(e))
+            if e == self.milestones[0]:
+                self.schedule_lr()
+            if e == self.milestones[1]:
+                self.schedule_lr()      
+            if e == self.milestones[2]:
+                self.schedule_lr()
+
+            accuracy_list = []
+            for iter_, (imgs, labels) in tqdm(enumerate(iter(self.loader))):
+                # print('iter_', type(iter_))
+                # print('step', self.step)
+                imgs = imgs.to(conf.device)
+                labels = labels.to(conf.device)
+                self.optimizer.zero_grad()
+                embeddings = self.model(imgs)
+                thetas = self.head(embeddings, labels)
+                loss = conf.ce_loss(thetas, labels)
+                loss.backward()
+                running_loss += loss.item()
+                self.optimizer.step()
+
+                if iter_ % conf.print_iter == 0 :
+                    elapsed = datetime.datetime.now() - time_
+                    expected = elapsed * (conf.batch_size / conf.print_iter)
+                    _epoch = round(e + ((iter_ + 1) / conf.batch_size),2)
+                    # print('_epoch', _epoch)
+                    _loss = round(loss.item(), 5)
+                    print(f'[{_epoch}/{conf.epochs}] loss:{_loss}, elapsed:{elapsed}, expected per epoch: {expected}')
+                    time_ = datetime.datetime.now()
+
+            self.step += 1
 
             # log 남기기
-            loss_board = running_loss / self.board_loss_every
+            board_loss_every = len(self.loader) / conf.print_iter
+            print('board_loss_ebery', board_loss_every)
+            loss_board = running_loss / board_loss_every
             self.writer.add_scalar('train_loss', loss_board, self.step)
             running_loss = 0.
 
@@ -238,56 +285,28 @@ class face_learner(object):
             self.board_val('cfp_fp', accuracy, best_threshold, roc_curve_tensor)
             accuracy_list.append(accuracy)
 
-            # save model, info
-            print(accuracy_list)
-            accuracy_mean = sum(accuracy_list)/3.0
-            self.save_state(conf,accuracy_mean,e, to_save_folder = False, extra = 'training')
+            accuracy, best_threshold, roc_curve_tensor = self.evaluate(conf, self.cfp_fp, self.cfp_fp_issame)
+            self.board_val('kface', accuracy, best_threshold, roc_curve_tensor)
+            accuracy_list.append(accuracy)
 
-        else:
-            for e in range(epochs):
-                print('epoch {} started'.format(e))
-                if e == self.milestones[0]:
-                    self.schedule_lr()
-                if e == self.milestones[1]:
-                    self.schedule_lr()      
-                if e == self.milestones[2]:
-                    self.schedule_lr()                                 
-                for imgs, labels in tqdm(iter(self.loader)):
-                    imgs = imgs.to(conf.device)
-                    labels = labels.to(conf.device)
-                    self.optimizer.zero_grad()
-                    embeddings = self.model(imgs)
-                    thetas = self.head(embeddings, labels)
-                    loss = conf.ce_loss(thetas, labels)
-                    loss.backward()
-                    running_loss += loss.item()
-                    self.optimizer.step()
-                    
-                    if self.step % self.board_loss_every == 0 and self.step != 0:
-                        loss_board = running_loss / self.board_loss_every
-                        self.writer.add_scalar('train_loss', loss_board, self.step)
-                        running_loss = 0.
-                    
-                    if self.step % self.evaluate_every == 0 and self.step != 0:
-                        accuracy, best_threshold, roc_curve_tensor = self.evaluate(conf, self.agedb_30, self.agedb_30_issame)
-                        self.board_val('agedb_30', accuracy, best_threshold, roc_curve_tensor)
-                        accuracy, best_threshold, roc_curve_tensor = self.evaluate(conf, self.lfw, self.lfw_issame)
-                        self.board_val('lfw', accuracy, best_threshold, roc_curve_tensor)
-                        accuracy, best_threshold, roc_curve_tensor = self.evaluate(conf, self.cfp_fp, self.cfp_fp_issame)
-                        self.board_val('cfp_fp', accuracy, best_threshold, roc_curve_tensor)
-                        self.model.train()
-                    if self.step % self.save_every == 0 and self.step != 0:
-                        self.save_state(conf, accuracy)
-                        
-                    self.step += 1
-                    
-            self.save_state(conf, accuracy, to_save_folder=True, extra='final')
+            # save model, info
+            # print(accuracy_list)
+            accuracy_mean = round(sum(accuracy_list)/conf.testset_num, 5)
+            loss_mean = round(loss_board, 5)
+            self.save_state(conf,accuracy_mean,e, loss_mean, to_save_folder = False, extra = 'training')
+            time_ = datetime.datetime.now()
+            elapsed = datetime.datetime.now() - time_
+            print(f'[epoch {e + 1}] acc: {accuracy_mean}, loss: {loss_mean}, elapsed: {elapsed}')
+            # print('train_loss:', loss_board) 
+
+        self.save_state(conf,accuracy_mean,e, loss_mean, to_save_folder = False, extra = 'final')
+
 
 
     def schedule_lr(self):
         for params in self.optimizer.param_groups:                 
             params['lr'] /= 10
-        print(self.optimizer)
+        print('***self.optimizer:',self.optimizer)
     
     def infer(self, conf, faces, target_embs, tta=False):
         '''
