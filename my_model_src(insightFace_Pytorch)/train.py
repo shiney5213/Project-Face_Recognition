@@ -11,12 +11,15 @@ if __name__ == '__main__':
     parser.add_argument("-depth", "--net_depth", help="how many layers [50,100,152]", default=50, type=int)
     parser.add_argument('-lr','--lr',help='learning rate',default=1e-3, type=float)
     # parser.add_argument("-b", "--batch_size", help="batch_size", default=96, type=int)
-    parser.add_argument("-b", "--batch_size", help="batch_size", default=32, type=int)
+    parser.add_argument("-b", "--batch_size", help="batch_size", default=100, type=int)
+    parser.add_argument("-t", "--testset_num", help="batch_size", default=4, type=int)
+    parser.add_argument("-r", "--print_iter", help='print_iter', default=1000, type=int)
+
 
     parser.add_argument("-w", "--num_workers", help="workers number", default=3, type=int)
     # parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='emore', type=str)
-    parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='small_vgg', type=str)
-    # parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='emore_kface', type=str)
+    # parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='small/_vgg', type=str)
+    parser.add_argument("-d", "--data_mode", help="use which database, [vgg, ms1m, emore, concat]",default='emore_kface', type=str)
     
     args = parser.parse_args()
 
@@ -30,8 +33,12 @@ if __name__ == '__main__':
     
     conf.lr = args.lr
     conf.batch_size = args.batch_size
+    conf.testset_num = args.testset_num
     conf.num_workers = args.num_workers
     conf.data_mode = args.data_mode
+    conf.epochs = args.epochs
+    conf.print_iter = args.print_iter
+
     learner = face_learner(conf)
 
     learner.train(conf, args.epochs)
