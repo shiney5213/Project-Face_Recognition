@@ -32,7 +32,11 @@ def get_config(training = True):
     conf.ms1m_folder = conf.data_path/'faces_ms1m_112x112'
     conf.emore_folder = conf.data_path/'faces_emore'
     conf.emorekface_folder = conf.data_path/'emore_kface'
+    
 
+    conf.testset_num = 3
+    conf.print_iter = 10
+    conf.epochs = 10
 
     conf.batch_size = 100 # irse net depth 50 
 #   conf.batch_size = 200 # mobilefacenet
