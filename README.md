@@ -43,6 +43,7 @@
 ##### 1.2.1.  k_face_dataset
 
   - dir: 400, file: 11027 ( 400 * 32 = 12800 개 중 1773장은 face deteching 실패)
+  - kface_pairs.txt : 24000  row
 
 ---
 ## 2. model
